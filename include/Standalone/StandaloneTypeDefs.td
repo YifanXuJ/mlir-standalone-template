@@ -3,6 +3,7 @@
 #ifndef STANDALONE_TYPE
 #define STANDALONE_TYPE
 
+include "StandaloneDialect.td"
 include "mlir/IR/OpBase.td"
 
 // All of the types will extend this class.
@@ -11,7 +12,7 @@ class MultisetType<string name> : TypeDef<Standalone_Dialect, name> { }
 
 
 // An alternate int type.
-def MultisetType : Test_Type<"Multiset"> {
+def MultisetType : MultisetType<"Multiset"> {
   let mnemonic = "multiset";
 
   let summary = "A multiset type with special semantics";
