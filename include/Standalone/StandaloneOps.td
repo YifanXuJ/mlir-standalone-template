@@ -66,4 +66,52 @@ def Standalone_FooOp : Standalone_Op<"foo", [NoSideEffect,
     }];
 }
 
+/*
+def Standalone_NewMultisetOp : Standalone_Op<"newMultiset", [NoSideEffect,
+                                             SameOperandsAndResultType]> {
+    let summary = "Initialize a new Multiset";
+    let description = [{
+        Given an integer, this op should return a Multiset containing 
+        this single integer.
+
+        Example:
+
+        ```mlir
+        %0 = constant 2 : i32
+        // Apply the bar operation to %0
+        %1 = standalone.bar %0 : i32
+        ```
+    }];
+
+    let arguments = (ins I32:$input);
+    let results = (outs Multiset:$res);
+
+    let assemblyFormat = [{
+        $input attr-dict `:` type($input)
+    }];
+}
+
+def Standalone_IterateOp : Standalone_Op<"iter", [NoSideEffect,
+                                             SameOperandsAndResultType]> {
+    let summary = "Iterator for a Multiset.";
+    let description = [{
+
+        Example:
+
+        ```mlir
+        %0 = constant 2 : i32
+        // Apply the bar operation to %0
+        %1 = standalone.bar %0 : i32
+        ```
+    }];
+
+    let arguments = (ins I32:$input);
+    let results = (outs I32:$res);
+
+    let assemblyFormat = [{
+        $input attr-dict `:` type($input)
+    }];
+    
+}
+*/
 #endif // STANDALONE_OPS
