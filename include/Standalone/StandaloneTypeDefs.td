@@ -5,7 +5,7 @@
 
 
 // All of the types will extend this class.
-class Test_Type<string name> : TypeDef<Standalone_Dialect, name> { }
+class MultisetType<string name> : TypeDef<Standalone_Dialect, name> { }
 
 
 
