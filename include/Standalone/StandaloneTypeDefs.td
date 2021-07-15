@@ -3,6 +3,7 @@
 #ifndef STANDALONE_TYPE
 #define STANDALONE_TYPE
 
+include "mlir/IR/OpBase.td"
 
 // All of the types will extend this class.
 class MultisetType<string name> : TypeDef<Standalone_Dialect, name> { }
