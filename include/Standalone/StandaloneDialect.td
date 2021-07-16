@@ -23,6 +23,10 @@ def Standalone_Dialect : Dialect {
         illustrate the basic setup required to develop MLIR-based tools without
         working inside of the LLVM source tree.
     }];
+    let extraClassDeclaration = [{
+        mlir::Type parseType(mlir::DialectAsmParser& parser) const override;
+        void printType(mlir::Type type, mlir::DialectAsmPrinter& printer) const override;
+    }];  
     let cppNamespace = "::mlir::standalone";
 }
 
