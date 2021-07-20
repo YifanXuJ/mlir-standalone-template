@@ -23,26 +23,6 @@ def MultisetType : MultisetType<"Multiset"> {
 
 
   
-  // We define the printer inline.
-  let printer = [{
-    $_printer << "multiset<" << getImpl()->width << ">";
-  }];
-
-  // The parser is defined here also.
-
-  let parser = [{
-    
-    if ($_parser.parseLess())
-      return Type();
-    int width;
-    if ($_parser.parseInteger(width))
-      return Type();
-    if ($_parser.parseGreater())
-      return Type();
-    
-    return get($_ctxt);
-  }];
-  
   /*
   let extraClassDeclaration = [{
     void registerAttributes();

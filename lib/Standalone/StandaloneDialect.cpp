@@ -9,6 +9,7 @@
 #include "Standalone/StandaloneDialect.h"
 #include "Standalone/StandaloneOps.h"
 #include "mlir/IR/DialectImplementation.h"
+#include "llvm/ADT/TypeSwitch.h"
 
 using namespace mlir;
 using namespace mlir::standalone;
@@ -25,6 +26,10 @@ void StandaloneDialect::initialize() {
 #define GET_OP_LIST
 #include "Standalone/StandaloneOps.cpp.inc"
       >();
+  addTypes<
+#define GET_TYPEDEF_LIST
+#include "Standalone/StandaloneTypeDefs.cpp.inc"
+    >();
 }
 
 mlir::Type StandaloneDialect::parseType(mlir::DialectAsmParser &parser) const {
@@ -32,15 +37,14 @@ mlir::Type StandaloneDialect::parseType(mlir::DialectAsmParser &parser) const {
   if (parser.parseKeyword(&ref)) {
     return {};
   }
-  return generatedTypeParser(getContext(), parser, ref);
+  Type res;
+  auto parsed = generatedTypeParser(getContext(), parser, ref, res);
+  if (parsed.hasValue() && succeeded(parsed.getValue()))
+    return res;
+  return {};
 }
 
 void StandaloneDialect::printType(mlir::Type type, mlir::DialectAsmPrinter &printer) const {
-  // Currently the only toy type is a struct type.
-  StructType structType = type.cast<StructType>();
-
-  // Print the struct type according to the parser format.
-  printer << "multiset<";
-  llvm::interleaveComma(structType.getElementTypes(), printer);
-  printer << '>';
+  auto wasPrinted = generatedTypePrinter(type, printer);
+  assert(succeeded(wasPrinted));
 }

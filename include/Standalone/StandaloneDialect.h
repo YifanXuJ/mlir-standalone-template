@@ -11,7 +11,9 @@
 
 #include "mlir/IR/Dialect.h"
 
+#define GET_TYPEDEF_CLASSES
 #include "Standalone/StandaloneTypeDefs.h.inc"
+
 #include "Standalone/StandaloneOpsDialect.h.inc"
 
 
