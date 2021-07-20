@@ -28,43 +28,11 @@ void StandaloneDialect::initialize() {
 }
 
 mlir::Type StandaloneDialect::parseType(mlir::DialectAsmParser &parser) const {
-  // Parse a struct type in the following form:
-  //   struct-type ::= `struct` `<` type (`,` type)* `>`
-
-  // NOTE: All MLIR parser function return a ParseResult. This is a
-  // specialization of LogicalResult that auto-converts to a `true` boolean
-  // value on failure to allow for chaining, but may be used with explicit
-  // `mlir::failed/mlir::succeeded` as desired.
-
-  // Parse: `struct` `<`
-  if (parser.parseKeyword("struct") || parser.parseLess())
-    return Type();
-
-  // Parse the element types of the struct.
-  SmallVector<mlir::Type, 1> elementTypes;
-  do {
-    // Parse the current element type.
-    llvm::SMLoc typeLoc = parser.getCurrentLocation();
-    mlir::Type elementType;
-    if (parser.parseType(elementType))
-      return nullptr;
-
-    // Check that the type is either a TensorType or another StructType.
-    if (!elementType.isa<mlir::TensorType, StructType>()) {
-      parser.emitError(typeLoc, "element type for a struct must either "
-                                "be a TensorType or a StructType, got: ")
-          << elementType;
-      return Type();
-    }
-    elementTypes.push_back(elementType);
-
-    // Parse the optional: `,`
-  } while (succeeded(parser.parseOptionalComma()));
-
-  // Parse: `>`
-  if (parser.parseGreater())
-    return Type();
-  return StructType::get(elementTypes);
+  llvm::StringRef ref;
+  if (parser.parseKeyword(&ref)) {
+    return {};
+  }
+  return generatedTypeParser(getContext(), parser, ref);
 }
 
 void StandaloneDialect::printType(mlir::Type type, mlir::DialectAsmPrinter &printer) const {
@@ -72,7 +40,7 @@ void StandaloneDialect::printType(mlir::Type type, mlir::DialectAsmPrinter &prin
   StructType structType = type.cast<StructType>();
 
   // Print the struct type according to the parser format.
-  printer << "struct<";
+  printer << "multiset<";
   llvm::interleaveComma(structType.getElementTypes(), printer);
   printer << '>';
 }
