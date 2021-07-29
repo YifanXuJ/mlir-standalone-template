@@ -9,11 +9,10 @@ module {
         return
     }
 
+    // CHECK-LABEL: func @bar()
     func @foo() {
         %0 = constant 1 : i32
-        %1 = constant 1 : i32
-        // CHECK: %{{.*}} = standalone.foo %{{.*}} : i32, i32
-        %res = standalone.foo %0, %1: i32, i32
+        %res = standalone.newmultiset %0 : multiset
         return
     }
 }
