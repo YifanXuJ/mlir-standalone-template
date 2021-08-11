@@ -11,6 +11,7 @@
 
 include "StandaloneDialect.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
+include "StandaloneTypeDefs.td"
 
 def Standalone_BarOp : Standalone_Op<"bar", [NoSideEffect,
                                              SameOperandsAndResultType]> {
@@ -40,8 +41,7 @@ def Standalone_BarOp : Standalone_Op<"bar", [NoSideEffect,
 }
 
 
-def NewMultisetOp : Standalone_Op<"newMultiset", [NoSideEffect,
-                                             SameOperandsAndResultType]> {
+def NewMultisetOp : Standalone_Op<"newMultiset", [NoSideEffect]> {
     let summary = "Initialize a new Multiset";
     let description = [{
         Given an integer, this op should return a Multiset containing 
@@ -52,26 +52,47 @@ def NewMultisetOp : Standalone_Op<"newMultiset", [NoSideEffect,
         ```mlir
         %0 = constant 2 : i32
         // Apply the bar operation to %0
-        %1 = standalone.newMultiset %0 : multiset
+        %1 = standalone.newMultiset %0
         ```
     }];
 
     let arguments = (ins I32:$input);
 
-    let results = (outs Multiset:$res);
+    let results = (outs MultisetType:$res);
 
     // Specify a parser and printer method.
-    let parser = [{ return ::parseNewMultisetOp(parser, result); }];
-    let printer = [{ return ::print(p, *this); }];
+    // let parser = [{ return ::parseNewMultisetOp(parser, result); }];
+    // let printer = [{ return ::print(p, *this); }];
+    let assemblyFormat = [{ $input attr-dict }];
 
-    let builders = [
-    // In the example, "DenseElementsAttr" seems to be used for tensor value
-    // Here we want to build a multiset with an i32 data, should we change this?
-    OpBuilder<(ins "DenseElementsAttr":$value), [{
-      build($_builder, $_state, value.getType(), value);
-    }]>,
+}
 
-  ];
+def UnionOp : Standalone_Op<"union", [NoSideEffect]> {
+    let summary = "Return the union of two multiset";
+    let description = [{
+        Given two multisets, this op should return a Multiset containing 
+        their union.
+
+        Example:
+
+        ```mlir
+        %0 = !standalone.multiset
+        %1 = !standalone.multiset
+        // Apply the bar operation to %0
+        %1 = standalone.newMultiset %0 
+        ```
+    }];
+
+    // syntax for multiple inputs or outputs
+    let arguments = (ins MultisetType:$input1, MultisetType:$input2);
+
+    let results = (outs MultisetType:$res);
+
+    // parser and printer for multiple inputs and outputs
+         // let parser = [{ return ::parseNewMultisetOp(parser, result); }];
+         // let printer = [{ return ::print(p, *this); }];
+    let assemblyFormat = [{ $input attr-dict }];
+
 }
 
 

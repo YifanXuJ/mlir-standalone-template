@@ -52,34 +52,3 @@ void StandaloneDialect::printType(mlir::Type type, mlir::DialectAsmPrinter &prin
   assert(succeeded(wasPrinted));
 }
 
-
-//===----------------------------------------------------------------------===//
-// NewMultisetOp
-
-void NewMultisetOp::build(mlir::OpBuilder &builder, mlir::OperationState &state,
-                       double value) {
-  //  not sure how to refer to multiset 
-  auto dataType = RankedTensorType::get({}, builder.getF64Type());
-  auto dataAttribute = DenseElementsAttr::get(dataType, value);
-  NewMultisetOp::build(builder, state, dataType, dataAttribute);
-}
-
-
-// Difference between parseOptionalAttrDict & parseAttribute
-static mlir::ParseResult parseNewMultisetOp(mlir::OpAsmParser &parser,
-                                         mlir::OperationState &result) {
-  mlir::DenseElementsAttr value;
-  if (parser.parseOptionalAttrDict(result.attributes) ||
-      parser.parseAttribute(value, "value", result.attributes))
-    return failure();
-
-  result.addTypes(value.getType());
-  return success();
-}
-
-
-static void print(mlir::OpAsmPrinter &printer, ConstantOp op) {
-  printer << "standalone.newMultiset ";
-  printer.printOptionalAttrDict(op->getAttrs(), /*elidedAttrs=*/{"value"});
-  printer << op.value();
-}

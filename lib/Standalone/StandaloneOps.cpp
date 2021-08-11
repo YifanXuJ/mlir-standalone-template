@@ -6,9 +6,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "Standalone/StandaloneOps.h"
 #include "Standalone/StandaloneDialect.h"
 #include "mlir/IR/OpImplementation.h"
+#include "mlir/IR/Builders.h"
+
+#include "Standalone/StandaloneOps.h"
+
+using namespace mlir;
+using namespace standalone;
 
 #define GET_OP_CLASSES
 #include "Standalone/StandaloneOps.cpp.inc"
